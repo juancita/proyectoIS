@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pedidos</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header>
+    <h1>Gestión de Pedidos</h1>
+    <button onclick="window.location.href='/'">Volver al Inicio</button>
+  </header>
+  <main>
+    <h2>Registrar Pedido</h2>
+    <form id="pedidoForm" method="POST" action="/pedidos">
+      <div>
+        <label for="cliente">Cliente:</label>
+        <select id="cliente" name="cliente" required>
+          <% clientes.forEach(cliente => { %>
+            <option value="<%= cliente.cel %>"><%= cliente.nombre %></option>
+          <% }) %>
+        </select>
+      </div>
+      <div>
+        <label for="producto">Producto:</label>
+        <select id="producto" name="producto" required>
+          <% productos.forEach(producto => { %>
+            <option value="<%= producto.id %>" data-cantidad="<%= producto.cantidad %>" data-valor="<%= producto.valor_uni %>">
+              <%= producto.nombre %> (Disponibles: <%= producto.cantidad %>)
+            </option>
+          <% }) %>
+        </select>
+      </div>
+      <div>
+        <label for="cantidad">Cantidad:</label>
+        <input type="number" id="cantidad" name="cantidad" min="1" required>
+      </div>
+      <div>
+        <label>Total:</label>
+        <span id="total">$0</span>
+      </div>
+      <button type="button" id="calcularTotal">Calcular Total</button>
+      <button type="submit">Registrar Pedido</button>
+    </form>
+
+    <h2>Pedidos Registrados</h2>
+    <ul>
+      <% pedidos.forEach(pedido => { %>
+        <li>
+          Cliente: <%= pedido.cliente.nombre %>, 
+          Producto: <%= pedido.producto.nombre %>, 
+          Cantidad: <%= pedido.cantidad %>, 
+          Total: $<%= (pedido.cantidad * pedido.producto.valor_uni).toFixed(2) %>, 
+          Estado: <%= pedido.estado %>
+          <button onclick="window.location.href='/pedidos/editar/<%= pedido.cel_cliente %>/<%= pedido.id_producto %>'">Editar</button>
+          <form action="/pedidos/eliminar/<%= pedido.cel_cliente %>/<%= pedido.id_producto %>" method="POST" style="display:inline;">
+            <button type="submit" onclick="return confirm('¿Estás seguro de eliminar este pedido?')">Eliminar</button>
+          </form>
+        </li>
+      <% }) %>
+    </ul>
+
+    <script>
+      document.getElementById('calcularTotal').addEventListener('click', function() {
+        const productoSelect = document.getElementById('producto');
+        const cantidadInput = document.getElementById('cantidad');
+        const totalSpan = document.getElementById('total');
+
+        const producto = productoSelect.options[productoSelect.selectedIndex];
+        const cantidad = parseInt(cantidadInput.value) || 0;
+        const valor = parseFloat(producto.getAttribute('data-valor')) || 0;
+
+        if (cantidad > 0) {
+          const total = cantidad * valor;
+          totalSpan.textContent = `$${total.toFixed(2)}`;
+        } else {
+          totalSpan.textContent = `$0`;
+        }
+      });
+    </script>
+  </main>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar Pedido</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header>
+    <h1>Editar Pedido</h1>
+    <button onclick="window.location.href='/pedidos'">Volver a Pedidos</button>
+  </header>
+  <main>
+    <form action="/pedidos/editar/<%= pedido.cel_cliente %>/<%= pedido.id_producto %>" method="POST">
+      <div>
+        <label for="cliente">Cliente:</label>
+        <select name="cliente" required>
+          <% clientes.forEach(cliente => { %>
+            <option value="<%= cliente.cel %>" <%= cliente.cel === pedido.cel_cliente ? 'selected' : '' %>><%= cliente.nombre %></option>
+          <% }) %>
+        </select>
+      </div>
+      <div>
+        <label for="producto">Producto:</label>
+        <select name="producto" required>
+          <% productos.forEach(producto => { %>
+            <option value="<%= producto.id %>" <%= producto.id === pedido.id_producto ? 'selected' : '' %>><%= producto.nombre %></option>
+          <% }) %>
+        </select>
+      </div>
+      <div>
+        <label for="cantidad">Cantidad:</label>
+        <input type="number" name="cantidad" value="<%= pedido.cantidad %>" min="1" required>
+      </div>
+      <div>
+        <label for="estado">Estado:</label>
+        <select name="estado" required>
+          <option value="Pendiente" <%= pedido.estado === 'Pendiente' ? 'selected' : '' %>>Pendiente</option>
+          <option value="Confirmado" <%= pedido.estado === 'Confirmado' ? 'selected' : '' %>>Confirmado</option>
+          <option value="Entregado" <%= pedido.estado === 'Entregado' ? 'selected' : '' %>>Entregado</option>
+        </select>
+      </div>
+      <button type="submit">Guardar Cambios</button>
+    </form>
+  </main>
+</body>
+</html>

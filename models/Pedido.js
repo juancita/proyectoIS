@@ -1,28 +1,30 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../db');
+module.exports = (sequelize, DataTypes) => {
+  const Pedido = sequelize.define('Pedido', {
+    cel_clien: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+    },
+    id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    estado: {
+      type: DataTypes.STRING,
+      defaultValue: 'Pendiente',
+    },
+    fecha: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+  }, {
+    primaryKey: ['cel_clien', 'id'], // Definimos la clave primaria compuesta
+  });
 
-const Pedido = sequelize.define('Pedido', {
-  cliente: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  producto: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  cantidad: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  total: {
-    type: DataTypes.FLOAT,
-    allowNull: false,
-  },
-  estado: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    defaultValue: 'Pendiente', // Por defecto el estado será "Pendiente"
-  },
-});
+  // Relación muchos a uno con Cliente
+/*  Pedido.belongsTo(sequelize.models.Cliente, {
+    foreignKey: 'cel_clien',
+    as: 'cliente',
+}); */ 
 
-module.exports = Pedido;
+  return Pedido;
+};
