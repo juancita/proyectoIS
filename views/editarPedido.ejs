@@ -12,12 +12,12 @@
     <button onclick="window.location.href='/pedidos'">Volver a Pedidos</button>
   </header>
   <main>
-    <form action="/pedidos/editar/<%= pedido.cel_cliente %>/<%= pedido.id_producto %>" method="POST">
+    <form action="/pedidos/editar/<%= pedido.cliente.cel %>/<%= pedido.producto.id %>" method="POST">
       <div>
         <label for="cliente">Cliente:</label>
         <select name="cliente" required>
           <% clientes.forEach(cliente => { %>
-            <option value="<%= cliente.cel %>" <%= cliente.cel === pedido.cel_cliente ? 'selected' : '' %>><%= cliente.nombre %></option>
+            <option value="<%= cliente.cel %>" <%= cliente.cel === pedido.cliente.cel ? 'selected' : '' %>><%= cliente.nombre %></option>
           <% }) %>
         </select>
       </div>
@@ -25,7 +25,7 @@
         <label for="producto">Producto:</label>
         <select name="producto" required>
           <% productos.forEach(producto => { %>
-            <option value="<%= producto.id %>" <%= producto.id === pedido.id_producto ? 'selected' : '' %>><%= producto.nombre %></option>
+            <option value="<%= producto.id %>" <%= producto.id === pedido.producto.id ? 'selected' : '' %>><%= producto.nombre %></option>
           <% }) %>
         </select>
       </div>

@@ -1,21 +1,18 @@
-module.exports = (sequelize, DataTypes) => {
-  const Cliente = sequelize.define('Cliente', {
-    cel_clien: {
-      type: DataTypes.BIGINT,
-      allowNull: false,
-      primaryKey: true,  // Asumí que la clave primaria es cel_clien
-    },
-    nombre: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-  });
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = require('../db');  // Conexión a la base de datos
 
-  /* Relación uno a muchos con Pedido
-  Cliente.hasMany(sequelize.models.Pedido, {
-    foreignKey: 'cel_clien',
-    as: 'pedidos',  // Alias para acceder a los pedidos de un cliente
-  });
-*/
-  return Cliente;
-};
+const Cliente = sequelize.define('Cliente', {
+  cel: {
+    type: DataTypes.BIGINT,
+    primaryKey: true,
+  },
+  nombre: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+}, {
+  tableName: 'cliente',  // Especificamos el nombre de la tabla
+  timestamps: false,     // No hay campos de timestamps en la base de datos
+});
+
+module.exports = Cliente;

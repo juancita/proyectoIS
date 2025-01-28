@@ -1,13 +1,10 @@
-// models/Producto.js
-const { DataTypes } = require('sequelize');
-const sequelize = require('../db');
-const Orden = require('./orden');  // Asegúrate de importar el modelo Orden
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = require('../db');  // Conexión a la base de datos
 
-const producto = sequelize.define('producto', {
+const Producto = sequelize.define('Producto', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    allowNull: false,
   },
   nombre: {
     type: DataTypes.STRING,
@@ -20,11 +17,10 @@ const producto = sequelize.define('producto', {
   valor_uni: {
     type: DataTypes.FLOAT,
     allowNull: false,
-  }
+  },
+}, {
+  tableName: 'producto',  // Especificamos el nombre de la tabla
+  timestamps: false,      // No hay campos de timestamps en la base de datos
 });
 
-// Asociación Producto tiene muchas Ordenes
-
-
-
-module.exports = producto;
+module.exports = Producto;
