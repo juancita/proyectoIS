@@ -69,11 +69,13 @@ app.post('/pedidos', async (req, res) => {
     // Registrar el pedido
     await Pedido.create({ cel_clien: cliente, id_producto: producto, estado: 'Pendiente', cantidad: cantidad, total: total });
 
-    // Actualizar la cantidad disponible en el inventario
+    /* Actualizar la cantidad disponible en el inventario
     await Producto.update(
       { cantidad: prod.cantidad - cantidad },
       { where: { id: producto } }
     );
+    
+    */
 
     res.redirect('/pedidos');
   } catch (err) {
