@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pedidos</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+</head>
+<body id="bodypedidos">
+ <!--scripts para los fomrs-->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <!--scripts para las tablas -->
+
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  
+  <header>
+     <!-- Botón para abrir el sidebar -->
+    <button class="open-btn" onclick="toggleSidebar()">☰ Menú</button>
+    <h1 id="titulo">Gestión de Pedidos</h1>
+    <button class="open-btn"  onclick="alertaCerrarSesion()">Salir </button>
+  </header>
+
+  <main>
+      <!----- sidebar ---->
+      <div id="sidebar" class="sidebar">
+        <button class="close-btn" onclick="toggleSidebar()">×</button>
+        <img id="logoside" src="/img/logo.jpg" alt="Ejemplo Imagen">
+        <br>
+        <a href="/pedidos">Pedidos</a>
+        <a href="/productos">Productos</a>
+        <a href="/clientes">Clientes</a>
+        <a href="/">Informes</a>
+        <a href="/">Administracion</a>
+      </div>
+<!--- div con formulario de registro y tablas----->      
+
+<!---div de registro de pedidos----->
+<div class="parent">
+  <div class="item">
+    <h2>Registrar Pedido</h2>
+    <form id="pedidoForm" >
+
+      <div class="">
+        <label for="producto">Seleccione un Cliente: </label>
+        <select id="cliente" name="cliente" class="form-select" required>
+          <option selected>Selecciona un cliente</option>
+          <% clientes.forEach(cliente => { %>
+            <option value="<%= cliente.cel %>"><%= cliente.nombre %></option>
+          <% }) %>
+        </select>
+      </div><br>
+      <div>
+        <label for="producto">Seleccione un producto: </label>
+        <select id="producto" class="form-select" name="producto" required >
+          <% productos.forEach(producto => { %>
+            <option value="<%= producto.id %>" data-cantidad="<%= producto.cantidad %>" data-valor="<%= producto.valor_uni %>">
+              <%= producto.nombre %> (Disponibles: <%= producto.cantidad %>)
+            </option>
+          <% }) %>
+        </select>
+      </div><br>
+      <div>
+        <label for="cantidad">Cantidad en unidades: </label>
+          <input type="number" class="form-control" id="cantidad" name="cantidad" min="1" oninput="validarCantidad()" required>
+      </div><br>
+      <div>
+        <label>Total:</label>
+        <span id="total">$0</span>
+      </div><br>
+      <button type="button" class="btn btn-primary" id="calcularTotal">Calcular Total</button>
+      <button class="btn btn-primary" type="submit">Registrar Pedido</button>
+    </form>
+  </div>
+
+  <!-----div de tabla--->
+  <div class="item">
+      <h2>Pedidos Registrados</h2><hr>
+      <table id="datatable" class="display">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% pedidos.forEach(pedido => { %>
+            <tr>
+              <td><%= pedido.cliente.nombre %></td>
+              <td><%= pedido.producto.nombre %></td>
+              <td><%= pedido.cantidad %></td>
+              <td>$<%= pedido.total %></td>
+              <td><%= pedido.estado %></td>
+              <td>
+                <div class="itemeditar">
+                  <button class="btn btn-outline-primary" onclick="window.location.href='/pedidos/editar/<%= pedido.cliente.cel %>/<%= pedido.producto.id %>'">
+                    <i class="bi bi-pencil-square"></i></button>
+                  
+                  <form action="/pedidos/eliminar/<%= pedido.cliente.cel %>/<%= pedido.producto.id %>" method="POST">
+                    <button class="btn btn-outline-danger" onclick="alert('Pedido eliminado con éxito');">
+                      <i class="bi bi-x-octagon"></i></button>
+                  </form> 
+                  <button class="btn btn-outline-primary" onclick="">
+                    <i class="bi bi-check-square"></i></button>
+
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+  </div>
+</div>
+
+  </main>
+  <script>
+    const productoSelect = document.getElementById('producto');
+    const cantidadInput = document.getElementById('cantidad');
+    const totalSpan = document.getElementById('total');
+    const calcularTotalButton = document.getElementById('calcularTotal');
+
+    calcularTotalButton.addEventListener('click', () => {
+      const selectedOption = productoSelect.options[productoSelect.selectedIndex];
+      const cantidadDisponible = parseInt(selectedOption.getAttribute('data-cantidad'), 10);
+      const valorUnitario = parseFloat(selectedOption.getAttribute('data-valor'));
+      const cantidadSeleccionada = parseInt(cantidadInput.value, 10);
+
+
+///valido la cantidad sea mayor a 0
+      if (isNaN(cantidadSeleccionada) || cantidadSeleccionada <= 0) {
+        alert('Por favor, ingresa una cantidad válida.');
+        totalSpan.textContent = '$0';
+        return;
+      }
+
+      if (cantidadSeleccionada > cantidadDisponible) {
+        alert('No hay suficiente inventario para completar el pedido');
+        totalSpan.textContent = '$0';
+      } else {
+        const total = cantidadSeleccionada * valorUnitario;
+        totalSpan.textContent = `$${total.toFixed(2)}`;
+      }
+    });
+
+    const pedidoForm = document.getElementById('pedidoForm');
+
+    pedidoForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const cliente = document.getElementById('cliente').value;
+      const producto = document.getElementById('producto').value;
+      const cantidad = cantidadInput.value;
+      const total = parseFloat(totalSpan.textContent.slice(1)); // Remueve el símbolo "$"
+
+      if (!cantidad || cantidad <= 0) {
+        alert('Por favor, ingresa una cantidad válida.');
+        return;
+      }
+
+      const response = await fetch('/pedidos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cliente, producto, cantidad, total })
+      });
+
+      if (response.ok) {
+        alert('Pedido registrado con éxito');
+        location.reload();
+      } else {
+        alert('Error al registrar el pedido');
+      }
+    });
+///valido la cantidad sea mayor a 1
+    function validarCantidad() {
+      if (cantidadInput.value < 1) cantidadInput.value = 1;
+    }
+/*funcion para el menu slide*/
+    function toggleSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      sidebar.style.left = sidebar.style.left === "0px" ? "-250px" : "0px";
+    }
+
+ /*funcion para los datatables */
+    $(document).ready(function () {
+      $('#datatable').DataTable({
+        "pageLength": 5, // Número de filas por página
+        "language": { "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/Spanish.json" } // Traducción al español
+      });
+      table.column(4).search("pendiente").draw();
+    });
+/* funcion de notificaciones  con Sweetaletr2*/
+
+function alertaCerrarSesion() {
+    Swal.fire({
+      title: "¿Cerrar sesion?",
+      icon: "question",
+      iconHtml: "?",
+      confirmButtonText: "Cerrar",
+      cancelButtonText: "Cancelar",
+      showCancelButton: true,
+      showCloseButton: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+          window.location.href='../'  // Cambia esta URL por la que necesites
+      }
+    });
+}
+
+function alertaEliminar(){
+  Swal.fire({
+    title: "¿Deseas eliminar el elemento?",
+    icon: "question",
+    iconHtml: "?",
+    html: `
+        <form id="formEliminar" action="/pedidos/eliminar/${clienteCel}/${productoId}" method="POST">
+          <button class="btn btn-link" style="display: none;">Eliminar</button>
+        </form>
+      `,
+    cancelButtonText: "Cancelar",
+    showCancelButton: true,
+    showCloseButton: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      document.getElementById('formEliminar').submit();
+    }
+  }); 
+}
+
+</script>
+</body>
+</html>
