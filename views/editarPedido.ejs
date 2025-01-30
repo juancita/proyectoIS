@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar Pedido</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
+<body id="bodypedidos">
+<!--scripts para los fomrs-->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<!--scripts para las tablas -->
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+
+  <header>
+     <!-- Botón para abrir el sidebar -->
+     <button class="open-btn" onclick="toggleSidebar()">☰ Menú</button>
+    <h1 id="titulo">Editar Pedido</h1>
+    <button class="open-btn" onclick="window.location.href='/pedidos'">Volver</button>
+  </header>
+  <main>
+    <!----- sidebar ---->
+    <div id="sidebar" class="sidebar">
+      <button class="close-btn" onclick="toggleSidebar()">×</button>
+      <img id="logoside" src="/img/logo.jpg" alt="Ejemplo Imagen">
+      <br>
+      <a href="/pedidos">Pedidos</a>
+      <a href="/productos">Productos</a>
+      <a href="/clientes">Clientes</a>
+    </div>
+
+    <div class="parent">
+      <div class="item">
+        <h2>Editar su pedido</h2><br>
+        <form action="/pedidos/editar/<%= pedido.cliente.cel %>/<%= pedido.producto.id %>" method="POST">
+          <div>
+            <label for="producto">Seleccione un Cliente: </label>
+            <select class="form-select" name="cliente" required>
+              <option selected>Selecciona un cliente</option>
+              <% clientes.forEach(cliente => { %>
+                <option value="<%= cliente.cel %>" <%= cliente.cel === pedido.cliente.cel ? 'selected' : '' %>><%= cliente.nombre %></option>
+              <% }) %>
+            </select>
+          </div><br>
+          <div>
+            <label for="producto">Seleccione un Producto: </label>
+            <select name="producto" class="form-select" required>
+              <% productos.forEach(producto => { %>
+                <option value="<%= producto.id %>" <%= producto.id === pedido.producto.id ? 'selected' : '' %>><%= producto.nombre %></option>
+              <% }) %>
+            </select>
+          </div><br>
+          <div>
+            <label for="cantidad">Cantidad en unidades:</label>
+            <input type="number" class="form-control" name="cantidad" value="<%= pedido.cantidad %>" min="1" required>
+          </div><br>
+          <div>
+            <label for="estado">Estado:</label>
+            <select name="estado" class="form-select" required>
+              <option value="Pendiente" <%= pedido.estado === 'Pendiente' ? 'selected' : '' %>>Pendiente</option>
+              <option value="Confirmado" <%= pedido.estado === 'Confirmado' ? 'selected' : '' %>>Confirmado</option>
+              <option value="Entregado" <%= pedido.estado === 'Entregado' ? 'selected' : '' %>>Entregado</option>
+            </select>
+          </div><br>
+          <button class="btn btn-primary" type="submit">Guardar Cambios</button><br>
+        </form>
+      </div>
+    </div>
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      sidebar.style.left = sidebar.style.left === "0px" ? "-250px" : "0px";
+    }
+  </script>
+  </main>
+</body>
+</html>
