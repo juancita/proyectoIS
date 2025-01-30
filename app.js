@@ -58,7 +58,7 @@ app.get('/pedidos', async (req, res) => {
 // Registrar pedido
 app.post('/pedidos', async (req, res) => {
   try {
-    const { cliente, producto, cantidad } = req.body;
+    const { cliente, producto, cantidad, total } = req.body;
 
     // Verificar si el producto tiene suficiente stock
     const prod = await Producto.findByPk(producto);
@@ -67,7 +67,7 @@ app.post('/pedidos', async (req, res) => {
     }
 
     // Registrar el pedido
-    await Pedido.create({ cel_clien: cliente, id_producto: producto, estado: 'Pendiente' });
+    await Pedido.create({ cel_clien: cliente, id_producto: producto, estado: 'Pendiente', cantidad: cantidad, total: total });
 
     // Actualizar la cantidad disponible en el inventario
     await Producto.update(
@@ -152,19 +152,76 @@ app.post('/pedidos/eliminar/:cel_clien/:id_producto', async (req, res) => {
     // Eliminar el pedido
     await pedido.destroy();
 
-    /* Restaurar la cantidad en el inventario
+    // Restaurar la cantidad en el inventario
     const producto = await Producto.findByPk(id_producto);
     if (producto) {
       producto.cantidad += pedido.cantidad;
       await producto.save();
     }
-*/
+
     res.redirect('/pedidos');
   } catch (err) {
     console.error('Error al eliminar el pedido:', err);
     res.status(500).send('Error al eliminar el pedido');
   }
 });
+
+//APARTADO DE INVENTARIOS:
+
+// Redirigir /inventario a /productos
+app.get('/inventario', (req, res) => {
+  res.redirect('/productos');
+});
+
+
+// 📌 Obtener la lista de productos con stock
+app.get('/productos', async (req, res) => {
+  try {
+    const productos = await Producto.findAll();
+    res.render('productos', { productos });
+  } catch (err) {
+    console.error('Error al obtener productos:', err);
+    res.status(500).send('Error al obtener productos');
+  }
+});
+
+// 📌 Agregar un nuevo producto
+app.post('/productos/agregar', async (req, res) => {
+  try {
+    const { nombre, cantidad, valor_uni } = req.body;
+    await Producto.create({ nombre, cantidad, valor_uni });
+    res.redirect('/productos');
+  } catch (err) {
+    console.error('Error al agregar producto:', err);
+    res.status(500).send('Error al agregar producto');
+  }
+});
+
+// 📌 Editar la cantidad de un producto
+app.post('/productos/editar/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { cantidad } = req.body;
+    await Producto.update({ cantidad }, { where: { id } });
+    res.redirect('/productos');
+  } catch (err) {
+    console.error('Error al actualizar inventario:', err);
+    res.status(500).send('Error al actualizar inventario');
+  }
+});
+
+// 📌 Eliminar un producto del inventario
+app.post('/productos/eliminar/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Producto.destroy({ where: { id } });
+    res.redirect('/productos');
+  } catch (err) {
+    console.error('Error al eliminar producto:', err);
+    res.status(500).send('Error al eliminar producto');
+  }
+});
+
 
 
 // Configuración del puerto

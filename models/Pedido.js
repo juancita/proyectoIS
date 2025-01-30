@@ -18,6 +18,9 @@ const Pedido = sequelize.define('Pedido', {
     type: DataTypes.STRING,
     defaultValue: 'Pendiente',
   },
+  cantidad: {
+    type: DataTypes.INTEGER,
+  },
   total: {
     type: DataTypes.FLOAT,
   }
